@@ -1,5 +1,5 @@
 from fastapi import FastAPI, status, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 
 
@@ -13,8 +13,9 @@ fake_items =[
 app = FastAPI()
 
 class Item(BaseModel):
-    name:str
-    price:float
+    name:str = Field(..., min_length=2, max_length=50, example='Apple')
+    price:float = Field(..., gt=0, example=10.33)
+    description: Optional[str] = Field(None, max_length=200, example='Optional Description')
 
 
 class ItemWithID(Item):
