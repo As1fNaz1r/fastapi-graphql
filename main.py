@@ -1,5 +1,14 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import List
+
+
+fake_items =[
+    {"name":"pen",
+    "price":10.1},
+    {"name":"pencil",
+    "price": 12.3}
+]
 
 app = FastAPI()
 
@@ -35,5 +44,9 @@ def update_item(item_id:int, item:Item):
 @app.delete("/items/{item_id}")
 def delete_item(item_id:int):
     return {"message":f"item {item_id} deleted"}
+
+@app.get("/all-items", response_model=List[Item])
+def read_all_items():
+    return fake_items
 
 
