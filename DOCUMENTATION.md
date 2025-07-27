@@ -14,3 +14,5 @@ It’s shorthand for saying:
 This is a container (list) that holds elements of a specific type.
 List[T]
 Where T is the type of items inside the list.
+Put, post require response_model in route
+delete route doesnot require it

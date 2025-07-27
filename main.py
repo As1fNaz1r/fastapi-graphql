@@ -29,11 +29,6 @@ def read_root():
     return {"message":"hello root!"}
 
 
-@app.get("/hello/{name}")
-def read_name(name:str):
-    return {'message':f'hello my name is {name}'}
-
-
 @app.post("/items/", response_model=ItemWithID, status_code=status.HTTP_201_CREATED)
 def create_item(item:Item):
     global next_id
@@ -48,14 +43,32 @@ def get_items(limit: int = 10):
     return {"message": f"returning {limit} items"}
 
 
-@app.put("/items/{item_id}")
+@app.get("/items/{item_id}", response_model=ItemWithID)
+def get_item(item_id:int):
+    for item in fake_db:
+        if item.id == item_id:
+            return item
+    raise HTTPException(status_code=404, detail="item not found")
+    
+
+
+@app.put("/items/{item_id}", response_model=ItemWithID)
 def update_item(item_id:int, item:Item):
-    return{"item_id": item_id, "updated":item}
+    for i, old_item in enumerate(fake_db):
+        if old_item.id == item_id:
+            updated = ItemWithID(**item.dict(), id=item_id)
+            fake_db[i]=updated
+            return updated
+    raise HTTPException(status_code=404,detail='Item not found')
 
 
-@app.delete("/items/{item_id}")
+@app.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_item(item_id:int):
-    return {"message":f"item {item_id} deleted"}
+    for i, item in enumerate(fake_db):
+        if item.id == item_id:
+            fake_db.pip(i)
+            return
+    raise HTTPException(status_code=404,detail="Item not found")
 
 @app.get("/all-items", response_model=List[ItemWithID])
 def read_all_items():
