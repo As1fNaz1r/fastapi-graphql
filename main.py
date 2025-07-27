@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 fake_items =[
@@ -16,6 +16,14 @@ class Item(BaseModel):
     name:str
     price:float
 
+
+class ItemWithID(Item):
+    id:int
+
+# In-memory DB
+fake_db:List[ItemWithID] = []
+next_id = 0
+
 @app.get("/")
 def read_root():
     return {"message":"hello root!"}
@@ -26,9 +34,13 @@ def read_name(name:str):
     return {'message':f'hello my name is {name}'}
 
 
-@app.post("/items/")
+@app.post("/items/", response_model=ItemWithID, status_code=status.HTTP_201_CREATED)
 def create_item(item:Item):
-    return {"name": item.name, "price": item.price}
+    global next_id
+    next_item = ItemWithID(**item.dict(), id=next_id)
+    fake_db.append(next_item)
+    next_id += 1
+    return next_item
 
 
 @app.get("/items")
@@ -45,8 +57,8 @@ def update_item(item_id:int, item:Item):
 def delete_item(item_id:int):
     return {"message":f"item {item_id} deleted"}
 
-@app.get("/all-items", response_model=List[Item])
+@app.get("/all-items", response_model=List[ItemWithID])
 def read_all_items():
-    return fake_items
+    return fake_db
 
 
