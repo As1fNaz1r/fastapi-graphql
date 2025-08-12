@@ -23,3 +23,16 @@ if not os.path.exists(INDEX_PATH):
 
 else:
     index = pickle.load(open(f"{INDEX_PATH}/faiss_index.pkl","rb"))
+
+@router.get("/ask")
+def ask_agent(q: str = Query(..., description='Your question to the agent')):
+    """ 
+    1. Search FAISS (stub for now)
+    2. Call gemini for response
+    """
+    context = "This is a placeholder context from FAISS"
+    prompt = f"Answer the question based on the following context:\n{context}\n\n Question:{q}"
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content(prompt)
+
+    return {"question":q,"answer":response.text}

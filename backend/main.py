@@ -7,3 +7,7 @@ app = FastAPI(
     version = "1.0.0",
     description = "A minimal app for LLM API"
 )
+
+#include routes from rag
+
+app.include_routes()

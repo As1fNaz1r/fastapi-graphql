@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings
 class settings(BaseSettings):
     ENV: str = "dev"
-    GEMINI_API_KEY: str = "AIzaSyDCHe8dfUZ-E8PG0Jtu-GjOzYL-KKkeAaY"
+    GEMINI_API_KEY: str
     VECTOR_STORE_PATH = "data/vector_store"
 
     class Config:
