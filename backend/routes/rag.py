@@ -1,12 +1,49 @@
-from fastapi import APIRouter, Query
-import google.generativei as genai 
+from fastapi import APIRouter, Query, Body
+from pydantic import BaseModel
+import google.generativeai as genai 
 import faiss
 import os
+import json
+from typing import List, Dict, Any
 import pickle
 from config import settings
 
 
 router = APIRouter()
+
+#----------------------------------------------
+# Paths
+#----------------------------------------------
+
+INDEX_DIR = settings.VECTOR_STORE_PATH
+INDEX_FILE = os.path.join(INDEX_DIR, "faiss.index")
+STORE_FILE = os.path.join(INDEX_DIR, "store.jsonl")
+
+
+#--------------------------------------------------
+# Gemini Configuration
+#--------------------------------------------------
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
+EMBED_MODEL = "text-embedding-004"
+GEN_MODEL = "gemini-pro"
+
+
+#-------------------------------------------------------
+# Utilities
+#------------------------------------------------------
+def _ensure_dirs():
+    os.makedirs(INDEX_DIR, exist_ok=True)
+
+def _write_index(index: faiss.Index):
+    faiss.write_index(index, INDEX_FILE)
+
+def _read_index() -> faiss.Index:
+    return faiss.read_index(INDEX_FILE)
+
+def _store_append()
+
+
 
 # Configure GEMINI API 
 genai.configure(api_key = settings.GEMINI_API_KEY)
